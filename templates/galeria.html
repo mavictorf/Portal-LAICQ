@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "_macros.html" import paginacao %}
+{% block titulo %}Galeria{% endblock %}
+
+{% block conteudo %}
+<h1>Galeria</h1>
+<p class="note center"><em>Fotos de encontros, eventos e projetos da liga.</em></p>
+<hr>
+
+{% if pag.items %}
+<table class="grid grid-8 mural galeria">
+	<tbody>
+	{% for linha in pag.items|batch(3) %}
+		<tr>
+		{% for m in linha %}
+			<td>
+				<a href="{{ url_for('site.post', post_id=m.post_id) }}"><img class="thumb" src="{{ m.url }}" alt="{{ m.legenda or m.post.titulo }}" loading="lazy"></a>
+				<strong>{{ m.legenda or m.post.titulo }}</strong>
+				<span class="small">{{ m.post.data|data }}</span>
+			</td>
+		{% endfor %}
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+{{ paginacao(pag, 'site.galeria') }}
+{% else %}
+<p>Nenhuma foto na galeria ainda.</p>
+{% endif %}
+{% endblock %}

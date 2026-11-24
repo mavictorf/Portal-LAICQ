@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "_macros.html" import paginacao %}
+{% block titulo %}Calendário{% endblock %}
+
+{% block conteudo %}
+<h1>Calendário de Encontros</h1>
+<p class="note center"><em>{% if passados %}Encontros passados.{% else %}Próximos encontros. Aberto a todos os campi.{% endif %}</em></p>
+<hr>
+
+{% if pag.items %}
+<table class="grid">
+	<thead><tr><th>Data</th><th>Horário</th><th>Tema</th><th>Formato</th><th>Local ou Link</th></tr></thead>
+	<tbody>
+	{% for e in pag.items %}
+		<tr>
+			<td><strong>{{ e.data|data }}</strong></td>
+			<td>{{ e.hora or '' }}</td>
+			<td>{{ e.titulo }}</td>
+			<td>{{ e.formato or '' }}</td>
+			<td>{% if e.local and e.local.startswith(('http://', 'https://')) %}<a href="{{ e.local }}">{{ e.local }}</a>{% else %}{{ e.local or '' }}{% endif %}</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+{{ paginacao(pag, 'site.calendario', passados=1 if passados else None) }}
+{% else %}
+<p>Nenhum encontro {% if passados %}registrado{% else %}agendado{% endif %}.</p>
+{% endif %}
+
+<p class="small-text">
+	{% if passados %}<a href="{{ url_for('site.calendario') }}">Ver próximos encontros</a>{% else %}<a href="{{ url_for('site.calendario', passados=1) }}">Ver encontros passados</a>{% endif %}
+</p>
+{% endblock %}

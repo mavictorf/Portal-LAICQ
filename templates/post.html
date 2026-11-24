@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block titulo %}{{ p.titulo }}{% endblock %}
+
+{% block conteudo %}
+<h1>{{ p.titulo }}</h1>
+<p class="note center">
+	<em>
+		{{ TIPOS[p.tipo] }}{% if p.rotulo %} · {{ p.rotulo }}{% endif %}{% if p.codigo %} · {{ p.codigo }}{% endif %}
+		· {{ p.data|data }}{% if p.campus %} · {{ p.campus }}{% endif %}
+		{% if p.autor %} · por {{ p.autor.nome }}{% endif %}
+		{% if not p.publico %} · <span class="red">somente membros</span>{% endif %}
+		{% if rascunho %} · <span class="red">RASCUNHO</span>{% endif %}
+	</em>
+</p>
+<hr>
+
+{% if p.resumo %}<p><strong>{{ p.resumo }}</strong></p>{% endif %}
+{% if p.extra %}<p><em>{{ p.extra }}</em></p>{% endif %}
+{% if p.link %}<p><a href="{{ p.link }}" rel="noopener noreferrer">{{ p.link }}</a></p>{% endif %}
+
+<div class="post-corpo">{{ p.corpo_md|md }}</div>
+
+{% if p.midias %}
+<hr>
+<div class="fotos">
+	{% for m in p.midias %}
+	<figure>
+		<a href="{{ m.url }}"><img class="foto-post" src="{{ m.url }}" alt="{{ m.legenda or p.titulo }}" loading="lazy"></a>
+		{% if m.legenda %}<figcaption class="small">{{ m.legenda }}</figcaption>{% endif %}
+	</figure>
+	{% endfor %}
+</div>
+{% endif %}
+
+<p class="small-text">
+	{% if user and (user.id == p.autor_id or user.eh_admin) and user.eh_editor %}
+	<a href="{{ url_for('painel.post_editar', post_id=p.id) }}">[editar]</a> ·
+	{% endif %}
+	<a href="{{ url_for({'atividade': 'site.atividades', 'publicacao': 'site.publicacoes', 'comunicado': 'site.comunicados', 'mural': 'site.galeria'}[p.tipo]) }}">&laquo; voltar à listagem</a>
+</p>
+{% endblock %}

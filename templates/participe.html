@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf %}
+{% block titulo %}Participe{% endblock %}
+
+{% block conteudo %}
+<h1>Participe da Liga</h1>
+<p class="lead"><em>Aberta a todos os cursos. Qualquer campus. Sem experiência prévia.</em></p>
+<hr>
+
+{% if user %}
+<p>Você já está autenticado como <strong>{{ user.nome }}</strong>.</p>
+{% else %}
+<p>
+	Preencha o cadastro abaixo. A diretoria analisa cada solicitação e, após a aprovação,
+	você poderá entrar com seu e-mail e senha.
+	{% if config.EMAIL_DOMINIOS %}Use seu e-mail institucional ({{ config.EMAIL_DOMINIOS|join(', ') }}).{% endif %}
+</p>
+
+<form class="form" action="{{ url_for('auth.participe') }}" method="post">
+	{{ csrf() }}
+	<label for="nome">Nome completo:</label>
+	<input type="text" id="nome" name="nome" size="40" maxlength="120" value="{{ campos.get('nome', '') }}" required>
+	<label for="email">E-mail:</label>
+	<input type="email" id="email" name="email" size="40" maxlength="254" value="{{ campos.get('email', '') }}" autocomplete="username" required>
+	<label for="campus">Campus:</label>
+	<input type="text" id="campus" name="campus" size="40" maxlength="80" value="{{ campos.get('campus', '') }}">
+	<label for="curso">Curso:</label>
+	<input type="text" id="curso" name="curso" size="40" maxlength="120" value="{{ campos.get('curso', '') }}">
+	<label for="senha">Senha (mín. 8 caracteres):</label>
+	<input type="password" id="senha" name="senha" size="40" minlength="8" autocomplete="new-password" required>
+	<label for="senha2">Repita a senha:</label>
+	<input type="password" id="senha2" name="senha2" size="40" minlength="8" autocomplete="new-password" required>
+	<div class="buttons"><input type="submit" value="Solicitar cadastro"></div>
+</form>
+{% endif %}
+{% endblock %}

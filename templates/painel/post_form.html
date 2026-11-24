@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf %}
+{% block titulo %}{{ 'Editar post' if p else 'Novo post' }}{% endblock %}
+
+{% block conteudo %}
+<h1>{{ 'Editar post' if p else 'Novo post' }}</h1>
+<hr>
+
+<form class="form" action="" method="post" enctype="multipart/form-data">
+	{{ csrf() }}
+
+	<label for="tipo">Tipo:</label>
+	<select id="tipo" name="tipo">
+		{% for k, nome in TIPOS.items() %}<option value="{{ k }}" {% if v.tipo == k %}selected{% endif %}>{{ nome }}</option>{% endfor %}
+	</select>
+
+	<label for="titulo">Título:</label>
+	<input type="text" id="titulo" name="titulo" size="60" maxlength="200" value="{{ v.titulo or '' }}" required>
+
+	<label for="rotulo">Rótulo:</label>
+	<input type="text" id="rotulo" name="rotulo" size="20" maxlength="30" value="{{ v.rotulo or '' }}" placeholder="ESTUDO, WORKSHOP, PROJETO">
+
+	<label for="codigo">Código:</label>
+	<input type="text" id="codigo" name="codigo" size="20" maxlength="30" value="{{ v.codigo or '' }}" placeholder="LQ-001">
+
+	<label for="data_ref">Data do evento:</label>
+	<input type="date" id="data_ref" name="data_ref" value="{{ v.data_ref or '' }}">
+
+	<label for="campus">Campus (mural):</label>
+	<input type="text" id="campus" name="campus" size="30" maxlength="80" value="{{ v.campus or '' }}">
+
+	<label for="resumo">Resumo (1 linha):</label>
+	<input type="text" id="resumo" name="resumo" size="60" maxlength="500" value="{{ v.resumo or '' }}">
+
+	<label for="extra">Autores / veículo (publicação):</label>
+	<input type="text" id="extra" name="extra" size="60" maxlength="300" value="{{ v.extra or '' }}" placeholder="Autores. Evento ou revista, ANO.">
+
+	<label for="link">Link (publicação):</label>
+	<input type="url" id="link" name="link" size="60" maxlength="500" value="{{ v.link or '' }}" placeholder="https://">
+
+	<label for="corpo_md">Texto (Markdown):</label>
+	<textarea id="corpo_md" name="corpo_md" rows="16" cols="70">{{ v.corpo_md or '' }}</textarea>
+
+	<span></span>
+	<span class="small">Use <code>##</code> para títulos, <code>**negrito**</code>, <code>*itálico*</code>, listas com <code>-</code> e <code>[texto](https://link)</code>.</span>
+
+	<span></span>
+	<label><input type="checkbox" name="publicado" value="1" {% if v.publicado %}checked{% endif %}> Publicado (desmarque para salvar como rascunho)</label>
+	<span></span>
+	<label><input type="checkbox" name="publico" value="1" {% if v.publico %}checked{% endif %}> Visível ao público (desmarque para ficar só para membros)</label>
+
+	{% if p and p.midias %}
+	<span><strong>Imagens atuais:</strong></span>
+	<div>
+		{% for m in p.midias %}
+		<div class="midia-edit">
+			<img class="thumb" src="{{ m.url }}" alt="">
+			<input type="text" name="legenda_{{ m.id }}" value="{{ m.legenda or '' }}" maxlength="200" placeholder="legenda">
+			<label><input type="checkbox" name="remover_{{ m.id }}" value="1"> remover</label>
+		</div>
+		{% endfor %}
+	</div>
+	{% endif %}
+
+	<label for="imagens">Adicionar imagens:</label>
+	<input type="file" id="imagens" name="imagens" accept="image/png,image/jpeg,image/gif,image/webp" multiple>
+	<span></span>
+	<span class="small">PNG, JPG, GIF ou WEBP. Até 10 por vez, 4 MB no total por envio.</span>
+
+	<div class="buttons">
+		<input type="submit" value="Salvar">
+		<a href="{{ url_for('painel.posts') }}">cancelar</a>
+	</div>
+</form>
+{% endblock %}

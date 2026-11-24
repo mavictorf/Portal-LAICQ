@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf, atividade, publicacao, foto %}
+
+{% block conteudo %}
+<h1>
+	<img class="title-icon" src="/img/icon.png" width="36" height="35" alt="">
+	Liga Acadêmica Intercampi de Computação Quântica
+	<img class="title-icon" src="/img/icon.png" width="36" height="35" alt="">
+</h1>
+
+<p class="lead"><em>Do quântico ao infinito, da natureza ao conhecimento</em></p>
+<hr>
+
+<p>
+	<strong>Bem-vindo, {{ user.nome.split()[0] if user else 'visitante' }}.</strong>
+	Este portal reúne o índice principal da LAICQ, a liga estudantil da UFERSA dedicada à computação quântica.
+	Fundada por estudantes dos campi da universidade, nossa missão é ensinar os fundamentos da computação
+	e da informação quânticas, conectar os campi em uma única comunidade e produzir projetos, simulações
+	e publicações. Não é necessário conhecimento prévio de quântica, apenas vontade de estudar.
+</p>
+<hr>
+
+<section id="atividades">
+	<h2>Registro de Atividades</h2>
+	{% if atividades %}
+	<ul>{% for p in atividades %}{{ atividade(p) }}{% endfor %}</ul>
+	{% else %}<p>Nenhuma atividade registrada ainda.</p>{% endif %}
+	<p><a href="{{ url_for('site.atividades') }}">Ver Arquivo Completo de Atividades...</a></p>
+</section>
+<hr>
+
+<section id="mural">
+	<h2 class="with-note">Mural da Liga</h2>
+	<p class="note"><em>Eventos participados, encontros e outras atividades da liga.</em></p>
+
+	{% if mural %}
+	<table class="grid grid-8 mural">
+		<tbody>
+			<tr>
+			{% for p in mural %}
+				<td>
+					{{ foto(p.midias[0] if p.midias else None, url_for('site.post', post_id=p.id)) }}
+					<strong>{{ p.titulo }}</strong>
+					<span class="small">{{ p.data|data }}{% if p.campus %} | {{ p.campus }}{% endif %}</span>
+					<a href="{{ url_for('site.post', post_id=p.id) }}">Ver postagem</a>
+				</td>
+			{% endfor %}
+			</tr>
+		</tbody>
+	</table>
+	{% else %}<p>Nenhuma postagem no mural ainda.</p>{% endif %}
+
+	<p><a href="{{ url_for('site.galeria') }}">Ver o mural completo na Galeria...</a></p>
+
+	<h2 class="plain">Publicações</h2>
+	{% if publicacoes %}
+	<ul>{% for p in publicacoes %}{{ publicacao(p) }}{% endfor %}</ul>
+	<p><a href="{{ url_for('site.publicacoes') }}">Ver todas as publicações...</a></p>
+	{% else %}<p>Nenhuma publicação cadastrada ainda.</p>{% endif %}
+</section>
+<hr>
+
+<section id="comunicados">
+	<h2 class="with-note">Comunicados e Avisos Internos</h2>
+	<p class="note"><em>Para circulação entre os membros da liga.</em></p>
+	{% if comunicados %}
+	<table class="grid grid-8">
+		<tbody>
+		{% for p in comunicados %}
+			<tr>
+				<td>
+					<a href="{{ url_for('site.post', post_id=p.id) }}"><strong>{{ p.titulo }}</strong></a>
+					{% if not p.publico %}<span class="small">(somente membros)</span>{% endif %}<br>
+					{% if p.resumo %}{{ p.resumo }}<br>{% endif %}
+					<span class="small">{{ p.data|data }}</span>
+				</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	{% else %}<p>Nenhum comunicado no momento.</p>{% endif %}
+</section>
+<hr>
+
+<section id="calendario">
+	<h2 class="with-note">Calendário de Encontros</h2>
+	<p class="note"><em>Grupos de estudo e eventos da liga. Aberto a todos os campi.</em></p>
+	{% if eventos %}
+	<table class="grid">
+		<thead><tr><th>Data</th><th>Horário</th><th>Tema</th><th>Formato</th><th>Local ou Link</th></tr></thead>
+		<tbody>
+		{% for e in eventos %}
+			<tr>
+				<td><strong>{{ e.data|data }}</strong></td>
+				<td>{{ e.hora or '' }}</td>
+				<td>{{ e.titulo }}</td>
+				<td>{{ e.formato or '' }}</td>
+				<td>{% if e.local and e.local.startswith(('http://', 'https://')) %}<a href="{{ e.local }}">{{ e.local }}</a>{% else %}{{ e.local or '' }}{% endif %}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	{% else %}<p>Nenhum encontro agendado.</p>{% endif %}
+	<p class="small-text"><a href="{{ url_for('site.calendario') }}">Ver calendário completo</a> · <a href="{{ url_for('site.calendario', passados=1) }}">encontros passados</a>.</p>
+</section>
+<hr>
+
+<section id="acesso">
+	{% if user %}
+	<h2>Área de Membros</h2>
+	<p>Autenticado como <strong>{{ user.nome }}</strong> ({{ user.cargo }}).
+	{% if user.eh_editor %}<a href="{{ url_for('painel.index') }}">Abrir painel</a>.{% endif %}</p>
+	{% else %}
+	<h2>Acesso de Membros</h2>
+	<p>Área restrita para membros da liga. Todas as teclas são registradas.</p>
+	<form class="login" action="{{ url_for('auth.entrar') }}" method="post">
+		{{ csrf() }}
+		<label for="usuario">Usuário (e-mail):</label>
+		<input type="email" id="usuario" name="usuario" size="24" autocomplete="username" required>
+		<label for="senha">Senha:</label>
+		<input type="password" id="senha" name="senha" size="24" autocomplete="current-password" required>
+		<div class="buttons">
+			<input type="submit" value="Autenticar">
+			<input type="reset" value="Limpar">
+		</div>
+	</form>
+	{% endif %}
+</section>
+{% endblock %}

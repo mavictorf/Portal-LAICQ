@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block titulo %}Painel{% endblock %}
+
+{% block conteudo %}
+<h1>Painel</h1>
+<p class="note center"><em>{{ user.nome }} · {{ user.cargo }}</em></p>
+<hr>
+
+<table class="grid grid-8">
+	<tbody>
+		<tr>
+			<td><strong><a href="{{ url_for('painel.post_novo') }}">+ Novo post</a></strong><br>
+				<span class="small">Atividade, comunicado, publicação ou mural.</span></td>
+			<td><strong><a href="{{ url_for('painel.posts') }}">{% if user.eh_admin %}Todos os posts{% else %}Meus posts ({{ meus }}){% endif %}</a></strong></td>
+		</tr>
+		<tr>
+			<td><strong><a href="{{ url_for('painel.evento_form') }}">+ Novo evento</a></strong><br>
+				<span class="small">Entra no Calendário de Encontros.</span></td>
+			<td><strong><a href="{{ url_for('painel.eventos') }}">Gerenciar calendário</a></strong></td>
+		</tr>
+		{% if user.eh_admin %}
+		<tr>
+			<td colspan="2"><strong><a href="{{ url_for('painel.usuarios') }}">Usuários e cargos</a></strong>
+				{% if pendentes %}<span class="red"> · {{ pendentes }} pendente(s)</span>{% endif %}</td>
+		</tr>
+		{% endif %}
+	</tbody>
+</table>
+{% endblock %}

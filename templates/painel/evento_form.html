@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf %}
+{% block titulo %}{{ 'Editar evento' if e else 'Novo evento' }}{% endblock %}
+
+{% block conteudo %}
+<h1>{{ 'Editar evento' if e else 'Novo evento' }}</h1>
+<hr>
+
+<form class="form" action="" method="post">
+	{{ csrf() }}
+	<label for="titulo">Tema:</label>
+	<input type="text" id="titulo" name="titulo" size="50" maxlength="200" value="{{ v.get('titulo', '') }}" required>
+	<label for="data">Data:</label>
+	<input type="date" id="data" name="data" value="{{ v.get('data', '') }}" required>
+	<label for="hora">Horário:</label>
+	<input type="time" id="hora" name="hora" value="{{ v.get('hora', '') }}">
+	<label for="formato">Formato:</label>
+	<select id="formato" name="formato">
+		<option value="">—</option>
+		{% for f in formatos %}<option value="{{ f }}" {% if v.get('formato') == f %}selected{% endif %}>{{ f }}</option>{% endfor %}
+	</select>
+	<label for="local">Local ou link:</label>
+	<input type="text" id="local" name="local" size="50" maxlength="300" value="{{ v.get('local', '') }}">
+	<div class="buttons">
+		<input type="submit" value="Salvar">
+		<a href="{{ url_for('painel.eventos') }}">cancelar</a>
+	</div>
+</form>
+{% endblock %}

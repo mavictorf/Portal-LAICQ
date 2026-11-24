@@ -1,0 +1,33 @@
+{% macro csrf() %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endmacro %}
+
+{% macro paginacao(pag, endpoint) %}
+{% if pag.pages > 1 %}
+<p class="small-text">
+	{% if pag.has_prev %}<a href="{{ url_for(endpoint, page=pag.prev_num, **kwargs) }}">&laquo; Anterior</a>{% endif %}
+	Página {{ pag.page }} de {{ pag.pages }}
+	{% if pag.has_next %}<a href="{{ url_for(endpoint, page=pag.next_num, **kwargs) }}">Próxima &raquo;</a>{% endif %}
+</p>
+{% endif %}
+{% endmacro %}
+
+{# Item do registro de atividades (home e arquivo) #}
+{% macro atividade(p) %}
+<li>
+	{{ p.data|data }} -
+	<strong class="{{ p.rotulo|cor }}">{% if p.rotulo %}{{ p.rotulo|upper }}: {% endif %}{{ p.titulo }}{% if p.codigo %} ({{ p.codigo }}){% endif %}</strong>
+	{% if p.resumo %}- {{ p.resumo }}{% endif %}
+	<a href="{{ url_for('site.post', post_id=p.id) }}">Acessar Relatório</a>.
+</li>
+{% endmacro %}
+
+{% macro publicacao(p) %}
+<li>
+	<strong>"{{ p.titulo }}"</strong>{% if p.extra %} - <em>{{ p.extra }}</em>{% endif %}
+	<a href="{{ p.link or url_for('site.post', post_id=p.id) }}">Acessar</a>.
+</li>
+{% endmacro %}
+
+{% macro foto(m, link) %}
+{% if m %}<a href="{{ link }}"><img class="thumb" src="{{ m.url }}" alt="{{ m.legenda or '' }}" loading="lazy"></a>
+{% else %}<div class="foto">SEM FOTO</div>{% endif %}
+{% endmacro %}

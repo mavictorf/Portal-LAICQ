@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf %}
+{% block titulo %}Editar usuário{% endblock %}
+
+{% block conteudo %}
+<h1>{{ u.nome }}</h1>
+<p class="note center"><em>{{ u.email }}</em></p>
+<hr>
+
+<form class="form" action="" method="post">
+	{{ csrf() }}
+	<label for="nivel">Nível de acesso:</label>
+	<select id="nivel" name="nivel">
+		{% for k, nome in NIVEIS.items() %}<option value="{{ k }}" {% if u.nivel == k %}selected{% endif %}>{{ k }} – {{ nome }}</option>{% endfor %}
+	</select>
+	<label for="cargo_titulo">Título do cargo:</label>
+	<input type="text" id="cargo_titulo" name="cargo_titulo" size="30" maxlength="80" value="{{ u.cargo_titulo or '' }}" placeholder="Presidente, Tesoureira...">
+	<span></span>
+	<label><input type="checkbox" name="ativo" value="1" {% if u.ativo %}checked{% endif %}> Conta ativa (aprovada)</label>
+	<label for="nova_senha">Redefinir senha:</label>
+	<input type="password" id="nova_senha" name="nova_senha" size="30" autocomplete="new-password" placeholder="deixe em branco para manter">
+	<div class="buttons">
+		<input type="submit" value="Salvar">
+		<a href="{{ url_for('painel.usuarios') }}">cancelar</a>
+	</div>
+</form>
+<p class="small-text">1 – Membro: lê o conteúdo interno · 2 – Editor: cria posts e eventos · 3 – Diretoria: administra tudo.</p>
+{% endblock %}

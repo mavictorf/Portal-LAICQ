@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "_macros.html" import atividade, publicacao, paginacao %}
+{% block titulo %}{{ titulo }}{% endblock %}
+
+{% block conteudo %}
+<h1>{{ titulo }}</h1>
+<p class="note center"><em>{{ nota }}</em></p>
+<hr>
+
+{% if pag.items %}
+	{% if tipo == 'atividade' %}
+		<ul>{% for p in pag.items %}{{ atividade(p) }}{% endfor %}</ul>
+	{% elif tipo == 'publicacao' %}
+		<ul>{% for p in pag.items %}{{ publicacao(p) }}{% endfor %}</ul>
+	{% else %}
+		<table class="grid grid-8"><tbody>
+		{% for p in pag.items %}
+			<tr><td>
+				<a href="{{ url_for('site.post', post_id=p.id) }}"><strong>{{ p.titulo }}</strong></a>
+				{% if not p.publico %}<span class="small">(somente membros)</span>{% endif %}<br>
+				{% if p.resumo %}{{ p.resumo }}<br>{% endif %}
+				<span class="small">{{ p.data|data }}</span>
+			</td></tr>
+		{% endfor %}
+		</tbody></table>
+	{% endif %}
+	{{ paginacao(pag, endpoint) }}
+{% else %}
+	<p>Nada por aqui ainda.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf %}
+{% block titulo %}Usuários{% endblock %}
+
+{% block conteudo %}
+<h1>Usuários e cargos</h1>
+<hr>
+
+<table class="grid">
+	<thead><tr><th>Nome</th><th>E-mail</th><th>Campus / curso</th><th>Cargo</th><th>Estado</th><th>Ações</th></tr></thead>
+	<tbody>
+	{% for u in lista %}
+		<tr>
+			<td><strong>{{ u.nome }}</strong></td>
+			<td>{{ u.email }}</td>
+			<td>{{ u.campus or '' }}{% if u.curso %} / {{ u.curso }}{% endif %}</td>
+			<td>{{ u.cargo }} <span class="small">(nível {{ u.nivel }})</span></td>
+			<td>{% if u.ativo %}ativo{% else %}<span class="red">pendente</span>{% endif %}</td>
+			<td>
+				{% if not u.ativo %}
+				<form class="inline" action="{{ url_for('painel.usuario_aprovar', uid=u.id) }}" method="post">
+					{{ csrf() }}<button class="linkbtn" type="submit">aprovar</button>
+				</form>
+				{% endif %}
+				<a href="{{ url_for('painel.usuario_editar', uid=u.id) }}">editar</a>
+				{% if u.id != user.id %}
+				<form class="inline" action="{{ url_for('painel.usuario_excluir', uid=u.id) }}" method="post">
+					{{ csrf() }}<button class="linkbtn" type="submit">excluir</button>
+				</form>
+				{% endif %}
+			</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+{% endblock %}

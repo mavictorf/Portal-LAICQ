@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>LAICQ :: {% block titulo %}Início{% endblock %}</title>
+	<link rel="icon" href="/img/favicon.png">
+	<link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+{% from "_macros.html" import csrf %}
+
+<div class="layout">
+
+	<!-- Barra lateral -->
+	<aside class="sidebar">
+		<div class="logo"><a href="{{ url_for('site.index') }}"><img src="/img/logo.png" width="150" alt="Logo da LAICQ"></a></div>
+		<hr>
+
+		<nav aria-label="Menu principal">
+			<ul class="menu gap-1">
+				<li><a href="{{ url_for('site.index') }}">Início</a></li>
+				<li><a href="{{ url_for('site.diretorio') }}">Diretório</a></li>
+				<li><a href="{{ url_for('site.atividades') }}">Atividades</a></li>
+				<li><a href="{{ url_for('site.publicacoes') }}">Publicações</a></li>
+				<li><a href="{{ url_for('site.galeria') }}">Galeria</a></li>
+				<li><a href="{{ url_for('site.calendario') }}">Calendário</a></li>
+				<li><a href="{{ url_for('site.comunicados') }}">Comunicados</a></li>
+			</ul>
+		</nav>
+		<hr>
+
+		{% if not user %}
+		<div><a href="{{ url_for('auth.participe') }}"><strong>PARTICIPE DA LIGA</strong></a></div>
+		<hr>
+		<div><a href="{{ url_for('auth.entrar') }}">Acesso de Membros</a></div>
+		<hr>
+		{% else %}
+		<div class="small">
+			<strong>{{ user.nome }}</strong><br>{{ user.cargo }}
+		</div>
+		<ul class="menu">
+			{% if user.eh_editor %}<li><a href="{{ url_for('painel.index') }}">Painel</a></li>{% endif %}
+			<li><a href="{{ url_for('auth.perfil') }}">Meu perfil</a></li>
+			<li>
+				<form class="inline" action="{{ url_for('auth.sair') }}" method="post">
+					{{ csrf() }}<button class="linkbtn" type="submit">Sair</button>
+				</form>
+			</li>
+		</ul>
+		<hr>
+		{% endif %}
+
+		<div><a href="https://ufersa.edu.br">UFERSA</a></div>
+		<hr>
+
+		<div><a href="#">Perfil oficial no Instagram</a></div>
+		<hr>
+
+		<a class="partner" href="https://ufersa.edu.br"><img src="/img/ufersa.png" width="150" alt="UFERSA - Universidade Federal Rural do Semi-Árido"></a>
+		<a class="partner" href="https://www.ibm.com/quantum/qiskit"><img src="/img/qiskit.png" width="150" alt="IBM Quantum Computing Qiskit"></a>
+		<hr>
+	</aside>
+
+	<!-- Conteúdo principal -->
+	<main class="content">
+		{% with msgs = get_flashed_messages(with_categories=true) %}
+		{% for cat, msg in msgs %}<p class="flash {{ cat }}">{{ msg }}</p>{% endfor %}
+		{% endwith %}
+
+		{% block conteudo %}{% endblock %}
+
+		<footer>
+			<hr>
+			<p class="center"><a href="{{ url_for('site.index') }}">Sobre a liga</a></p>
+			<p class="fine">
+				&copy; 2026 LAICQ, UFERSA. Acesso não autorizado será recursivamente higienizado.<br>
+				Esta página é compatível com HTML5. Para melhor visualização, use um navegador moderno.
+			</p>
+		</footer>
+	</main>
+
+</div>
+
+</body>
+</html>

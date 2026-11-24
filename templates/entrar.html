@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf %}
+{% block titulo %}Acesso de Membros{% endblock %}
+
+{% block conteudo %}
+<h1>Acesso de Membros</h1>
+<hr>
+<p>Área restrita para membros da liga. Todas as teclas são registradas.</p>
+<form class="login" action="{{ url_for('auth.entrar') }}" method="post">
+	{{ csrf() }}
+	<input type="hidden" name="next" value="{{ proximo }}">
+	<label for="usuario">Usuário (e-mail):</label>
+	<input type="email" id="usuario" name="usuario" size="28" autocomplete="username" required autofocus>
+	<label for="senha">Senha:</label>
+	<input type="password" id="senha" name="senha" size="28" autocomplete="current-password" required>
+	<div class="buttons">
+		<input type="submit" value="Autenticar">
+		<input type="reset" value="Limpar">
+	</div>
+</form>
+<p class="small-text">Ainda não é membro? <a href="{{ url_for('auth.participe') }}">Cadastre-se</a>. Esqueceu a senha? Peça uma nova à diretoria.</p>
+{% endblock %}

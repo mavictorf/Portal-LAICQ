@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block titulo %}Diretório{% endblock %}
+
+{% block conteudo %}
+<h1>Diretório</h1>
+<p class="note center"><em>Membros da liga. Cada pessoa escolhe, no próprio perfil, se aparece aqui.</em></p>
+<hr>
+
+{% if membros %}
+<table class="grid">
+	<thead><tr><th>Nome</th><th>Cargo</th><th>Campus</th><th>Curso</th>{% if user %}<th>E-mail</th>{% endif %}</tr></thead>
+	<tbody>
+	{% for m in membros %}
+		<tr>
+			<td><strong>{{ m.nome }}</strong></td>
+			<td>{{ m.cargo }}</td>
+			<td>{{ m.campus or '' }}</td>
+			<td>{{ m.curso or '' }}</td>
+			{% if user %}<td>{{ m.email }}</td>{% endif %}
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+{% else %}
+<p>Nenhum membro listado.</p>
+{% endif %}
+{% endblock %}

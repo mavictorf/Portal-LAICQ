@@ -1,0 +1,399 @@
+/* LAICQ :: estilos do site (HTML5)
+   Mantém o visual da versão anterior em HTML 3.2. */
+
+/* ---------- Base ---------- */
+body {
+	margin: 0;                          /* barra lateral colada nas bordas da janela */
+	background: #f0f0f0;
+	color: #000;
+	font-family: "Times New Roman", Times, serif;
+	font-size: 16px;
+}
+
+body.plain {
+	margin: 8px;                        /* páginas com moldura mantêm a margem */
+	background: #fff;
+}
+
+a {
+	color: #0000ff;
+}
+
+a:visited {
+	color: #800080;
+}
+
+img {
+	border: 0;
+}
+
+h1 {
+	text-align: center;
+}
+
+.content h2 {
+	margin: 16px 0;
+	font-size: 16px;
+	text-decoration: underline;
+}
+
+/* Título seguido de uma linha de nota */
+.content h2.with-note {
+	margin-bottom: 0;
+}
+
+.content h2.plain {
+	text-decoration: none;
+}
+
+.note {
+	margin: 0 0 16px;
+	font-size: 13px;
+}
+
+.lead {
+	margin: 16px 0;
+	font-size: 18px;
+	font-weight: bold;
+	text-align: center;
+}
+
+.center {
+	text-align: center;
+}
+
+.small {
+	font-size: 13px;
+}
+
+.small-text {
+	margin: 16px 0;
+	font-size: 13px;
+}
+
+.fine {
+	margin: 16px 0;
+	font-size: 10px;
+	text-align: center;
+}
+
+/* Linhas pequenas que ocupam a linha inteira */
+.mural .small,
+.cartazes .small,
+.brand .small {
+	display: block;
+}
+
+.uline {
+	text-decoration: underline;
+}
+
+.red   { color: #ff0000; }
+
+/* Links vermelhos mantêm o sublinhado na cor padrão de link */
+a.red                { text-decoration-color: #0000ff; }
+a.red:visited        { color: #ff0000; text-decoration-color: #800080; }
+.navy  { color: #34496b; }
+.gold  { color: #d27a00; }
+.green { color: #1f8a4c; }
+
+.title-icon {
+	margin: 0 2px;
+	vertical-align: top;
+}
+
+/* ---------- Layout com barra lateral ---------- */
+.layout {
+	display: flex;
+	min-height: 100vh;                  /* barra lateral e padrão chegam ao fim da janela */
+}
+
+.sidebar {
+	flex: 0 0 180px;
+	padding: 10px 10px 310px;           /* 310px = espaço do padrão */
+	background: #c0c0c0 url("img/pattern.png") no-repeat left bottom;
+}
+
+.content {
+	flex: 1;
+	min-width: 0;
+	padding: 10px;
+	background: #f0f0f0;
+}
+
+/* Sem margem no topo e no fim do conteúdo (como em células de tabela) */
+.content > :first-child,
+.frame > :first-child {
+	margin-top: 0;
+}
+
+.content > footer > :last-child,
+.frame > :last-child {
+	margin-bottom: 0;
+}
+
+.partner {
+	display: block;
+	margin: 0 auto;
+	padding: 5px;
+}
+
+.sidebar .logo img,
+.sidebar img {
+	display: block;
+	margin: 0 auto;
+}
+
+.sidebar .partner {
+	display: block;
+}
+
+.sidebar .small {
+	font-size: 13px;
+}
+
+.brand strong {
+	text-decoration: underline;
+}
+
+.menu {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.menu.gap-1 { padding-bottom: 18px; }
+.menu.gap-2 { padding-bottom: 36px; }
+
+/* ---------- Tabelas ---------- */
+.grid {
+	width: 100%;
+	border: 1px solid;
+	border-color: #a8a8a8 #545454 #545454 #a8a8a8;   /* relevo da tabela */
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+.grid th,
+.grid td {
+	padding: 5px;
+	border: 1px solid;
+	border-color: #545454 #a8a8a8 #a8a8a8 #545454;   /* relevo das células */
+	text-align: left;
+	vertical-align: top;
+}
+
+.grid th {
+	background: #d0d0d0;
+}
+
+.grid-8 th,
+.grid-8 td {
+	padding: 8px;
+}
+
+.cartazes td {
+	text-align: center;
+}
+
+.cartazes td.head {
+	background: #d0d0d0;
+}
+
+.mural td {
+	width: 33%;
+	text-align: center;
+}
+
+.foto {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 160px;
+	height: 120px;
+	margin: 0 auto;
+	background: #d0d0d0;
+	font-size: 13px;
+}
+
+/* ---------- Formulário de acesso ---------- */
+.login {
+	display: grid;
+	grid-template-columns: max-content max-content;
+	justify-content: start;
+	align-items: center;
+	margin: 0 0 16px;
+}
+
+.login label,
+.login input[type="text"],
+.login input[type="password"] {
+	margin: 2px;
+}
+
+.login .buttons {
+	grid-column: 1 / -1;
+	margin-top: 18px;
+}
+
+/* ---------- Páginas com moldura (diretório, atividades) ---------- */
+.top {
+	margin: 0 0 16px;
+}
+
+.top img {
+	display: block;
+	margin: 0 auto;
+}
+
+.frame {
+	box-sizing: border-box;
+	width: 89%;
+	margin: 0 auto;
+	padding: 12px;
+	border: 2px solid #666;
+	background: #f0f0f0;
+}
+
+.frame h1 {
+	margin: 0.83em 0;
+	font-size: 24px;
+	text-align: center;
+	text-decoration: underline;
+}
+
+/* ---------- Banner (descomente em index.html para usar) ---------- */
+.banner {
+	padding: 20px;
+	border: 4px solid #000;
+	background: #34496b;
+	text-align: center;
+}
+
+.banner p {
+	margin: 16px 0;
+	font-weight: bold;
+}
+
+.banner a,
+.banner a:visited {
+	color: #e3a625;
+	text-decoration-color: #0000ff;
+}
+
+.banner a:visited {
+	text-decoration-color: #800080;
+}
+
+.banner-title { margin: 0 !important; font-size: 32px; }
+.banner-lead  { font-size: 24px; color: #fff; }
+.banner-sub   { font-size: 18px; color: #e3a625; }
+.banner-cta   { font-size: 24px; }
+.banner-next  { margin-bottom: 0 !important; font-size: 13px; font-weight: normal !important; color: #e3a625; }
+
+.banner .banner-cta a,
+.banner .banner-cta a:visited {
+	color: #fff;
+}
+
+/* ---------- Telas pequenas: barra lateral acima do conteúdo ---------- */
+@media (max-width: 700px) {
+	.layout {
+		flex-direction: column;
+	}
+
+	.sidebar {
+		flex: none;
+		padding-bottom: 140px;
+		background-repeat: repeat-x;
+	}
+
+	.frame {
+		width: auto;
+	}
+
+	/* Tabelas largas rolam na horizontal; o mural vira uma coluna */
+	.grid {
+		display: block;
+		overflow-x: auto;
+	}
+
+	.mural tbody,
+	.mural tr,
+	.mural td {
+		display: block;
+		width: auto;
+	}
+}
+
+/* ---------- Avisos, formulários e painel (backend Flask) ---------- */
+.flash {
+	margin: 0 0 16px;
+	padding: 8px;
+	border: 1px solid;
+	border-color: #545454 #a8a8a8 #a8a8a8 #545454;
+	background: #d0d0d0;
+}
+
+.flash.erro { color: #ff0000; font-weight: bold; }
+.flash.ok   { color: #1f8a4c; font-weight: bold; }
+
+form.inline {
+	display: inline;
+	margin: 0;
+}
+
+.linkbtn {
+	padding: 0;
+	border: 0;
+	background: none;
+	color: #0000ff;
+	font: inherit;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.form {
+	display: grid;
+	grid-template-columns: max-content minmax(0, 1fr);
+	gap: 6px 10px;
+	align-items: start;
+	margin: 0 0 16px;
+}
+
+.form label { padding-top: 2px; }
+.form input[type="text"],
+.form input[type="email"],
+.form input[type="url"],
+.form input[type="password"],
+.form textarea { max-width: 100%; box-sizing: border-box; }
+.form .buttons { grid-column: 1 / -1; margin-top: 12px; }
+
+.thumb {
+	display: block;
+	width: 160px;
+	height: 120px;
+	margin: 0 auto;
+	object-fit: cover;
+}
+
+.foto-post {
+	max-width: 100%;
+	height: auto;
+}
+
+.fotos figure { margin: 0 0 16px; }
+
+.post-corpo img { max-width: 100%; height: auto; }
+.post-corpo pre { overflow-x: auto; padding: 8px; background: #d0d0d0; }
+.post-corpo table { border-collapse: collapse; }
+.post-corpo th, .post-corpo td { padding: 4px 8px; border: 1px solid #545454; }
+
+.midia-edit { margin: 0 0 8px; }
+.midia-edit .thumb { margin: 0 0 4px; }
+
+.galeria td strong { display: block; }
+
+@media (max-width: 700px) {
+	.form { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+instance/
+.env
+.env.example
+.vercel/
+.neon
+node_modules/
+.env.local

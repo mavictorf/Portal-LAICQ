@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf, paginacao %}
+{% block titulo %}Calendário (painel){% endblock %}
+
+{% block conteudo %}
+<h1>Calendário de Encontros</h1>
+<p class="center"><a href="{{ url_for('painel.evento_form') }}"><strong>+ Novo evento</strong></a></p>
+<hr>
+
+{% if pag.items %}
+<table class="grid">
+	<thead><tr><th>Data</th><th>Horário</th><th>Tema</th><th>Formato</th><th>Local</th><th>Ações</th></tr></thead>
+	<tbody>
+	{% for e in pag.items %}
+		<tr>
+			<td><strong>{{ e.data|data }}</strong></td>
+			<td>{{ e.hora or '' }}</td>
+			<td>{{ e.titulo }}</td>
+			<td>{{ e.formato or '' }}</td>
+			<td>{{ e.local or '' }}</td>
+			<td>
+				<a href="{{ url_for('painel.evento_form', evento_id=e.id) }}">editar</a>
+				<form class="inline" action="{{ url_for('painel.evento_excluir', evento_id=e.id) }}" method="post">
+					{{ csrf() }}<button class="linkbtn" type="submit">excluir</button>
+				</form>
+			</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+{{ paginacao(pag, 'painel.eventos') }}
+{% else %}
+<p>Nenhum evento cadastrado.</p>
+{% endif %}
+{% endblock %}

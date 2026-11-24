@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf, paginacao %}
+{% block titulo %}Posts{% endblock %}
+
+{% block conteudo %}
+<h1>{% if user.eh_admin %}Todos os posts{% else %}Meus posts{% endif %}</h1>
+<p class="center">
+	<a href="{{ url_for('painel.post_novo') }}"><strong>+ Novo post</strong></a> ·
+	Filtrar:
+	<a href="{{ url_for('painel.posts') }}">todos</a>
+	{% for k, v in TIPOS.items() %}| <a href="{{ url_for('painel.posts', tipo=k) }}">{{ v }}</a> {% endfor %}
+</p>
+<hr>
+
+{% if pag.items %}
+<table class="grid">
+	<thead><tr><th>Data</th><th>Tipo</th><th>Título</th><th>Autor</th><th>Estado</th><th>Ações</th></tr></thead>
+	<tbody>
+	{% for p in pag.items %}
+		<tr>
+			<td>{{ p.data|data }}</td>
+			<td>{{ TIPOS[p.tipo] }}</td>
+			<td><a href="{{ url_for('site.post', post_id=p.id) }}">{{ p.titulo }}</a></td>
+			<td>{{ p.autor.nome if p.autor else '—' }}</td>
+			<td>{% if not p.publicado %}rascunho{% elif p.publico %}público{% else %}só membros{% endif %}</td>
+			<td>
+				{% if user.eh_admin or p.autor_id == user.id %}
+				<a href="{{ url_for('painel.post_editar', post_id=p.id) }}">editar</a>
+				<form class="inline" action="{{ url_for('painel.post_excluir', post_id=p.id) }}" method="post">
+					{{ csrf() }}<button class="linkbtn" type="submit">excluir</button>
+				</form>
+				{% endif %}
+			</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+{{ paginacao(pag, 'painel.posts', tipo=filtro) }}
+{% else %}
+<p>Nenhum post.</p>
+{% endif %}
+{% endblock %}
