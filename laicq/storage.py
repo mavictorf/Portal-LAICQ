@@ -1,10 +1,11 @@
 """Armazenamento de imagens.
 
-- Com BLOB_READ_WRITE_TOKEN definido (Vercel): envia para o Vercel Blob (API REST).
-- Sem token (desenvolvimento): grava em instance/uploads e serve em /uploads/<nome>.
+- Com SUPABASE_URL e SUPABASE_SECRET_KEY definidos: envia para o Supabase Storage (API REST).
+- Com BLOB_READ_WRITE_TOKEN definido (legado): Vercel Blob; mantido só para apagar imagens antigas.
+- Sem nada (desenvolvimento): grava em instance/uploads e serve em /uploads/<nome>.
 
-Para trocar por outro provedor (R2, Supabase Storage...), basta reimplementar
-`salvar` e `remover` mantendo as assinaturas.
+A chave secreta fica só no servidor (variável de ambiente); nunca a envie ao navegador.
+O bucket precisa ser público (as imagens são exibidas por URL direta).
 """
 import json
 import os
@@ -28,6 +29,22 @@ _TIPOS = {
 
 def _token():
     return os.environ.get("BLOB_READ_WRITE_TOKEN")
+
+
+def _supabase():
+    """(base_url, key, bucket) when Supabase Storage is configured, otherwise None."""
+    base = (os.environ.get("SUPABASE_URL") or "").rstrip("/")
+    key = os.environ.get("SUPABASE_SECRET_KEY") or os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+    if base and key:
+        return base, key, os.environ.get("SUPABASE_BUCKET", "laicq")
+    return None
+
+
+def _supabase_headers(key: str, extra: dict | None = None) -> dict:
+    headers = {"apikey": key, **(extra or {})}
+    if not key.startswith("sb_"):  # new-format keys are not JWTs; legacy keys also go in Authorization
+        headers["authorization"] = f"Bearer {key}"
+    return headers
 
 
 def _pasta_local() -> str:
@@ -58,6 +75,22 @@ def salvar(arquivo) -> str:
 
     chave = f"{secrets.token_hex(8)}.{ext}"
 
+    sb = _supabase()
+    if sb:
+        base, key, bucket = sb
+        req = urllib.request.Request(
+            f"{base}/storage/v1/object/{bucket}/{chave}",
+            data=dados,
+            method="POST",
+            headers=_supabase_headers(key, {"content-type": mime, "cache-control": "max-age=31536000"}),
+        )
+        try:
+            urllib.request.urlopen(req, timeout=25).close()
+        except (urllib.error.URLError, OSError) as exc:
+            current_app.logger.error("Falha no upload para o Supabase Storage: %s", exc)
+            raise ValueError("Não foi possível enviar a imagem. Tente novamente.") from exc
+        return f"{base}/storage/v1/object/public/{bucket}/{chave}"
+
     if _token():
         req = urllib.request.Request(
             f"{BLOB_API}/laicq/{chave}",
@@ -86,7 +119,17 @@ def salvar(arquivo) -> str:
 def remover(url: str) -> None:
     """Melhor esforço: falhas só são registradas no log."""
     try:
-        if url.startswith("/uploads/"):
+        sb = _supabase()
+        if sb and url.startswith(f"{sb[0]}/storage/v1/object/public/{sb[2]}/"):
+            base, key, bucket = sb
+            chave = url.rsplit("/", 1)[-1]
+            req = urllib.request.Request(
+                f"{base}/storage/v1/object/{bucket}/{chave}",
+                method="DELETE",
+                headers=_supabase_headers(key),
+            )
+            urllib.request.urlopen(req, timeout=15).close()
+        elif url.startswith("/uploads/"):
             caminho = os.path.join(_pasta_local(), os.path.basename(url))
             if os.path.exists(caminho):
                 os.remove(caminho)

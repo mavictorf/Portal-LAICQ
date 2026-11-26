@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask, g, render_template, session
+from sqlalchemy.engine import make_url
 from sqlalchemy.pool import NullPool
 
 from . import util
@@ -19,6 +20,26 @@ def _url_banco():
     if url.startswith("postgresql://"):
         url = "postgresql+psycopg://" + url[len("postgresql://"):]
     return url
+
+
+def _opcoes_postgres(url: str) -> dict:
+    """Connection options for hosted Postgres (Supabase).
+
+    - Remote hosts get sslmode=require unless the URL already sets it.
+    - Port 6543 is the Supabase shared pooler in transaction mode, which does not
+      support prepared statements: psycopg must not create them.
+    """
+    parsed = make_url(url)
+    if not parsed.drivername.startswith("postgresql"):
+        return {}
+    args = {}
+    host = parsed.host or ""
+    remoto = bool(host) and not host.startswith("/") and host not in ("localhost", "127.0.0.1", "::1")
+    if remoto and "sslmode" not in parsed.query:
+        args["sslmode"] = "require"
+    if parsed.port == 6543 or os.environ.get("DB_NO_PREPARED") == "1":
+        args["prepare_threshold"] = None
+    return {"connect_args": args} if args else {}
 
 
 def create_app(config: dict | None = None) -> Flask:
@@ -42,7 +63,7 @@ def create_app(config: dict | None = None) -> Flask:
         os.makedirs(app.instance_path, exist_ok=True)
         url = "sqlite:///" + os.path.join(app.instance_path, "laicq.db")
 
-    opcoes = {}
+    opcoes = _opcoes_postgres(url)
     if EM_VERCEL:
         opcoes["poolclass"] = NullPool  # serverless: sem pool entre invocações
 
